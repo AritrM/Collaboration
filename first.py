@@ -33,6 +33,6 @@ for i in range(8):
 print(ans_nr)
 read = str()
 k = input("[Enter to close.]")
-heyyyy hloooo
+
 
 
