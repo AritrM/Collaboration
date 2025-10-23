@@ -1,11 +1,19 @@
 import requests
-#pip install requests
 import json
-
-import time
 import datetime
-api_key = "VGH2EXmyclRgyevMXbNcvtDEuZBvV2l4"
-lalong = "22.43, 88.28"
+from latlong import api_key,get_lalong
+
+
+
+
+place = input("Location: ")
+latlong = get_lalong(place)
+
+if latlong:
+    lat,long = latlong
+    print(f"{lat},{long}")
+    
+lalong = f"{lat}, {long}"
 time  =  "[2025]-[10]-[22]T[11]:[34]:[00]"
 url = f"https://api.pirateweather.net/forecast/{api_key}/{lalong}"
 
@@ -33,5 +41,3 @@ for i in range(8):
 print(ans_nr)
 read = str()
 k = input("[Enter to close.]")
-
-
