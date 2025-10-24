@@ -9,24 +9,32 @@ import json
 
 # Your OpenWeatherMap API key
 API_KEY = "VGH2EXmyclRgyevMXbNcvtDEuZBvV2l4"
+query = {
+    "lang" : "en",
+    "units" : "si",
+    "exclude":"hourly,minutely,flag"
+}
 
-def get_location():
-    g = geocoder.ip('me')
-    return g.city, g.latlng
+
+
+city = geocoder.ip('me').city
+lat,lon = geocoder.ip('me').latlng
+lalong = f"{lat},{lon}"
+
 
 def get_coordinates(city):
     geolocator = Nominatim(user_agent="weather_app")
     location = geolocator.geocode(city)
     return location.latitude, location.longitude
 
-def get_elevation(lat, lon):
-    url = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}"
-    response = requests.get(url).json()
-    return response['results'][0]['elevation']
+lat, lon = get_coordinates(city)
+
 
 def get_weather(city):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-    response = requests.get(url).json()
+    lat, lon = get_coordinates(city)
+    loc = f"{lat},{lon}"
+    url = f"https://api.pirateweather.net/forecast/{API_KEY}/{loc}"
+    response = requests.get(url,params=query).json()
     return response
 
 def get_weather_icon(icon_code):
@@ -43,19 +51,28 @@ def update_weather():
         return
 
     try:
+        
         weather_data = get_weather(city)
-        if weather_data.get("cod") != 200:
-            messagebox.showerror("Error", weather_data.get("message", "Unknown error"))
-            return
+        # if weather_data.get("cod") != 200:
+        #     messagebox.showerror("Error", weather_data.get("message", "Unknown error"))
+        #     return
 
         lat, lon = get_coordinates(city)
-        elevation = get_elevation(lat, lon)
+        elevation = weather_data["elevation"]
 
-        weather = weather_data["weather"][0]["description"].title()
-        temp = weather_data["main"]["temp"]
-        humidity = weather_data["main"]["humidity"]
-        wind = weather_data["wind"]["speed"]
-        icon_code = weather_data["weather"][0]["icon"]
+        weather = weather_data["daily"]["data"][0]["summary"].title()
+        if weather_data["currently"]["temperature"] > -273 :
+            
+            temp = f"{weather_data["currently"]["temperature"]}°C"
+        else:
+            temp = "data error"
+        if weather_data["currently"]["humidity"] < 0:
+            humidity = f"{weather_data["currently"]["humidity"]}%"
+        else:
+            humidity = "data error"
+        wind = weather_data["currently"]["windSpeed"]
+        
+        icon_code = "10n"
 
         icon = get_weather_icon(icon_code)
         icon_label.config(image=icon)
@@ -66,8 +83,8 @@ def update_weather():
             f"Latitude: {lat:.2f}, Longitude: {lon:.2f}\n"
             f"Elevation: {elevation} m\n"
             f"Weather: {weather}\n"
-            f"Temperature: {temp}°C\n"
-            f"Humidity: {humidity}%\n"
+            f"Temperature: {temp}\n"
+            f"Humidity: {humidity}\n"
             f"Wind Speed: {wind} m/s"
         ))
 
@@ -98,7 +115,7 @@ result_label = ttk.Label(root, text="", justify="left")
 result_label.pack(pady=10)
 
 # Autofill city from IP
-default_city, _ = get_location()
+default_city = city
 city_entry.insert(0, default_city)
 
 root.mainloop()
