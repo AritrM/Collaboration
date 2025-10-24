@@ -5,9 +5,10 @@ import requests
 import geocoder
 from geopy.geocoders import Nominatim
 import io
+import json
 
 # Your OpenWeatherMap API key
-API_KEY = "your_openweathermap_api_key"
+API_KEY = "VGH2EXmyclRgyevMXbNcvtDEuZBvV2l4"
 
 def get_location():
     g = geocoder.ip('me')
