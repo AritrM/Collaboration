@@ -17,3 +17,6 @@ dekh to sob thikthak?
 
 ha bhai
 ekdom all clear
+
+#install these bash
+# pip install requests geopy geocoder pillow
