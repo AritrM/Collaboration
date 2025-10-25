@@ -107,7 +107,7 @@ def update_weather(event):
             temp = f"{weather_data["currently"]["temperature"]}°C"
         else:
             temp = "data error"
-        if weather_data["currently"]["humidity"] < 0:
+        if weather_data["currently"]["humidity"] > 0:
             humidity = f"{weather_data["currently"]["humidity"]}%"
         else:
             humidity = "data error"
