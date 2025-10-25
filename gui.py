@@ -16,6 +16,47 @@ query = {
 }
 
 
+icon_pack = {
+    "clear-day": "01d",
+    "clear-night": "01n",
+    "cloudy": "04d",
+    "partly-cloudy-day": "02d",
+    "partly-cloudy-night": "02n",
+    "rain": "09d",
+    "light-rain": "10d",
+    "heavy-rain": "09d",
+    "snow": "13d",
+    "light-snow": "13d",
+    "heavy-snow": "13d",
+    "sleet": "13d",
+    "very-light-sleet": "13d",
+    "light-sleet": "13d",
+    "heavy-sleet": "13d",
+    "wind": "50d",
+    "breezy": "50d",
+    "dangerous-wind": "50d",
+    "mist": "50d",
+    "fog": "50d",
+    "haze": "50d",
+    "smoke": "50d",
+    "drizzle": "09d",
+    "flurries": "13d",
+    "precipitation": "09d",
+    "mostly-clear-day": "02d",
+    "mostly-clear-night": "02n",
+    "mostly-cloudy-day": "04d",
+    "mostly-cloudy-night": "04n",
+    "possible-rain-day": "10d",
+    "possible-rain-night": "10n",
+    "possible-snow-day": "13d",
+    "possible-snow-night": "13n",
+    "possible-sleet-day": "13d",
+    "possible-sleet-night": "13n",
+    "possible-precipitation-day": "09d",
+    "possible-precipitation-night": "09n"
+}
+
+
 
 city = geocoder.ip('me').city
 lat,lon = geocoder.ip('me').latlng
@@ -44,7 +85,7 @@ def get_weather_icon(icon_code):
     img = Image.open(io.BytesIO(img_data))
     return ImageTk.PhotoImage(img)
 
-def update_weather():
+def update_weather(event):
     city = city_entry.get()
     if not city:
         messagebox.showwarning("Input Error", "Please enter a city name.")
@@ -59,7 +100,7 @@ def update_weather():
 
         lat, lon = get_coordinates(city)
         elevation = weather_data["elevation"]
-
+        offset = weather_data["offset"]
         weather = weather_data["daily"]["data"][0]["summary"].title()
         if weather_data["currently"]["temperature"] > -273 :
             
@@ -71,8 +112,8 @@ def update_weather():
         else:
             humidity = "data error"
         wind = weather_data["currently"]["windSpeed"]
-        
-        icon_code = "10n"
+        icon_n = weather_data["daily"]["data"][0]["icon"]
+        icon_code = icon_pack[icon_n]
 
         icon = get_weather_icon(icon_code)
         icon_label.config(image=icon)
@@ -82,7 +123,9 @@ def update_weather():
             f"City: {city}\n"
             f"Latitude: {lat:.2f}, Longitude: {lon:.2f}\n"
             f"Elevation: {elevation} m\n"
+            f"Offset: {offset} hr\n"
             f"Weather: {weather}\n"
+            f"Today in short: {icon_n}\n"
             f"Temperature: {temp}\n"
             f"Humidity: {humidity}\n"
             f"Wind Speed: {wind} m/s"
@@ -117,5 +160,8 @@ result_label.pack(pady=10)
 # Autofill city from IP
 default_city = city
 city_entry.insert(0, default_city)
+
+
+root.bind("<Return>", update_weather)
 
 root.mainloop()
