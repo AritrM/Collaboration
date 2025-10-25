@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import requests
-import geocoder
+import geocoder ,datetime
 from geopy.geocoders import Nominatim
 import io
 import json
@@ -112,6 +112,7 @@ def update_weather(event):
         else:
             humidity = "data error"
         wind = weather_data["currently"]["windSpeed"]
+        time = datetime.datetime.fromtimestamp(weather_data["currently"]["time"])
         icon_n = weather_data["daily"]["data"][0]["icon"]
         icon_code = icon_pack[icon_n]
 
@@ -128,7 +129,8 @@ def update_weather(event):
             f"Today in short: {icon_n}\n"
             f"Temperature: {temp}\n"
             f"Humidity: {humidity}\n"
-            f"Wind Speed: {wind} m/s"
+            f"Wind Speed: {wind} m/s\n"
+            f"Last updated: {time}"
         ))
 
     except Exception as e:
