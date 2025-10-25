@@ -114,18 +114,20 @@ def update_weather(event):
         wind = weather_data["currently"]["windSpeed"]
         time = datetime.datetime.fromtimestamp(weather_data["currently"]["time"])
         icon_n = weather_data["daily"]["data"][0]["icon"]
-        icon_code = icon_pack[icon_n]
+        icon_d = weather_data["currently"]["icon"]
+        icon_code = icon_pack[icon_d]
 
         icon = get_weather_icon(icon_code)
         icon_label.config(image=icon)
         icon_label.image = icon
 
         result_label.config(text=(
-            f"City: {city}\n"
+            f"City: {city.title()}\n"
             f"Latitude: {lat:.2f}, Longitude: {lon:.2f}\n"
             f"Elevation: {elevation} m\n"
             f"Offset: {offset} hr\n"
-            f"Weather: {weather}\n"
+            f"Now: {icon_d}\n"
+            f"Today: {weather}\n"
             f"Today in short: {icon_n}\n"
             f"Temperature: {temp}\n"
             f"Humidity: {humidity}\n"
